@@ -12,7 +12,7 @@ const exec = mongoose.Query.prototype.exec
 // create a new method for caching logics
 mongoose.Query.prototype.cache = function(options = {}) {
   // use hash key for invalidate cache
-  this.hashKey = options.redisHashKey || ''
+  this.hashKey = JSON.stringify(options.redisHashKey || '')
   // to tell exec() that we want to cache
   this.useCache = true
   // to let this method can be chained
