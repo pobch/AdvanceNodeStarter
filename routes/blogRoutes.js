@@ -14,7 +14,7 @@ module.exports = app => {
   });
 
   app.get('/api/blogs', requireLogin, async (req, res) => {
-    const blogs = await Blog.find({ _user: req.user.id }) // result is Array of Objs
+    const blogs = await Blog.find({ _user: req.user.id }).cache() // result is Array of Objs
     
     res.send(blogs)
   });
