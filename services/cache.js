@@ -59,3 +59,9 @@ mongoose.Query.prototype.exec = async function() {
   //   or an array of Mongoose Model objs
   return result // async function auto return Promise
 }
+
+module.exports = {
+  clearCache(redisHashKey) {
+    client.del(JSON.stringify(redisHashKey))
+  }
+}
