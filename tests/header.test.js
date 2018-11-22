@@ -14,13 +14,20 @@ afterEach(async () => {
   await browser.close()
 })
 
-test('display logo when navigate to the root url', async () => {
+test('the header has the correct text', async () => {
   const text = await page.$eval('a.brand-logo', el => el.innerHTML)
 
   expect(text).toEqual('Blogster')
 })
 
-test('display a log out button when an user logged in', async () => {
+test('clicking login starts oAuth flow', async () => {
+  await page.click('.right a')
+  const url = await page.url()
+
+  expect(url).toMatch(/accounts\.google\.com/)
+})
+
+test('when logged in, shows logout button', async () => {
   const mongoose = require('mongoose')
   const Keygrip = require('keygrip')
   const keys = require('../config/keys')
