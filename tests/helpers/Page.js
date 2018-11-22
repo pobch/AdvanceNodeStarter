@@ -1,7 +1,22 @@
+const puppeteer = require('puppeteer')
 const sessionFactory = require('../factories/sessionFactory')
 const userFactory = require('../factories/userFactory')
 
-class Page {
+class CustomPage {
+  static async build() {
+    const browser = await puppeteer.launch({
+      headless: false
+    })
+    const page = await browser.newPage()
+    const customPage = new CustomPage(page)
+
+    return new Proxy(customPage, {
+      get(target, property) {
+        return customPage[property] || browser[property] || page[property]
+      }
+    })
+  }
+  
   constructor(pageObj) {
     this.page = pageObj
   }
@@ -17,4 +32,4 @@ class Page {
   }
 }
 
-module.exports = Page
+module.exports = CustomPage
