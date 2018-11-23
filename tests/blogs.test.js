@@ -38,11 +38,24 @@ describe('When logged in', () => {
     test('submitting then saving adds a new blog to index page', async () => {
       await page.click('button.green')
       await page.waitFor('.card-content')
-      
+
       const title = await page.$eval('.card-content .card-title', el => el.innerHTML)
       const content = await page.$eval('.card-content p', el => el.innerHTML)
       expect(title).toEqual('New Title')
       expect(content).toEqual('New Content')
+    })
+  })
+
+  describe('And using invalid inputs', () => {
+    beforeEach(async () => {
+      await page.click('form button[type="submit"]')
+    })
+
+    test('the form shows an error message', async () => {
+      const textArr = await page.$$eval('.red-text', els => els.map(el => el.innerHTML))
+      textArr.forEach(text => {
+        expect(text).toEqual('You must provide a value')
+      })
     })
   })
 })
