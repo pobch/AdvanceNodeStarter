@@ -60,45 +60,28 @@ describe('When logged in', () => {
   })
 })
 
-describe('When not logged in', () => {
-  const fetchReqs = [
+describe('When user is not logged in', () => {
+  const actions = [
     {
-      url: '/api/blogs',
-      options: {
-        method: 'GET',
-        credentials: 'same-origin', // to send cookies with a req
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
+      path: '/api/blogs',
+      method: 'get'
     },
     {
-      url: '/api/blogs',
-      options: {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: 'T',
-          content: 'C'
-        })
+      path: '/api/blogs',
+      method: 'post',
+      data: {
+        title: 'T',
+        content: 'C'
       }
     }
   ]
 
-  test('all apis are restricted', async () => {
-    const allRes = await page.evaluate(async (reqs) => {
-      const resPromiseArr = reqs.map(async (req) => {
-        const res = await fetch(req.url, req.options)
-        return await res.json()
-      })
-      const resArr = await Promise.all(resPromiseArr)
-      return resArr
-    }, fetchReqs)
+  test('all blog related apis are prohibited', async () => {
+    const resArr = await page.execRequests(actions)
 
-    expect(allRes).toEqual([{error: 'You must log in!'}, {error: 'You must log in!'}])
+    for (let res of resArr) {
+      expect(res).toEqual({ error: 'You must log in!' })
+    }
   })
-  
+
 })
