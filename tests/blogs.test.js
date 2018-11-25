@@ -90,14 +90,15 @@ describe('When not logged in', () => {
 
   test('all apis are restricted', async () => {
     const allRes = await page.evaluate(async (reqs) => {
-      const resPromiseArr = reqs.map(req => {
-        return fetch(req.url, req.options)
+      const resPromiseArr = reqs.map(async (req) => {
+        const res = await fetch(req.url, req.options)
+        return await res.json()
       })
       const resArr = await Promise.all(resPromiseArr)
-      return await Promise.all(resArr.map(res => res.json()))
+      return resArr
     }, fetchReqs)
 
     expect(allRes).toEqual([{error: 'You must log in!'}, {error: 'You must log in!'}])
   })
-
+  
 })
