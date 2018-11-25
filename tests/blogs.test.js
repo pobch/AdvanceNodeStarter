@@ -59,3 +59,45 @@ describe('When logged in', () => {
     })
   })
 })
+
+describe('When not logged in', () => {
+  const fetchReqs = [
+    {
+      url: '/api/blogs',
+      options: {
+        method: 'GET',
+        credentials: 'same-origin', // to send cookies with a req
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    },
+    {
+      url: '/api/blogs',
+      options: {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: 'T',
+          content: 'C'
+        })
+      }
+    }
+  ]
+
+  test('all apis are restricted', async () => {
+    const allRes = await page.evaluate(async (reqs) => {
+      const resPromiseArr = reqs.map(req => {
+        return fetch(req.url, req.options)
+      })
+      const resArr = await Promise.all(resPromiseArr)
+      return await Promise.all(resArr.map(res => res.json()))
+    }, fetchReqs)
+
+    expect(allRes).toEqual([{error: 'You must log in!'}, {error: 'You must log in!'}])
+  })
+
+})
